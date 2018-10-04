@@ -1865,7 +1865,10 @@ open class WWCalendarTimeSelector: UIViewController, UITableViewDelegate, UITabl
     }
     
     internal func WWCalendarRowDateIsEnable(_ date: Date) -> Bool {
-        if !optionEnabledDates.contains(date) {
+        if !optionEnabledDates.isEmpty &&
+            !optionEnabledDates.contains(where: { (inputDate) -> Bool in
+                return NSCalendar.current.compare(date, to: inputDate, toGranularity: .day) == .orderedSame
+            }) {
             return false
         }
         if let fromDate = optionRangeOfEnabledDates.start,
