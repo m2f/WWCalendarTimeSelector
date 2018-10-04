@@ -388,6 +388,8 @@ open class WWCalendarTimeSelector: UIViewController, UITableViewDelegate, UITabl
     /// Selector will show the earliest selected date's month by default.
     open var optionCurrentDateRange: WWCalendarTimeSelectorDateRange = WWCalendarTimeSelectorDateRange()
     
+    open var optionEnabledDates: Set<Date> = []
+    
     open var optionRangeOfEnabledDates: WWCalendarTimeSelectorEnabledDateRange = WWCalendarTimeSelectorEnabledDateRange()
     
     /// Set the background blur effect, where background is a `UIVisualEffectView`. Available options are as `UIBlurEffectStyle`:
@@ -1863,6 +1865,9 @@ open class WWCalendarTimeSelector: UIViewController, UITableViewDelegate, UITabl
     }
     
     internal func WWCalendarRowDateIsEnable(_ date: Date) -> Bool {
+        if !optionEnabledDates.contains(date) {
+            return false
+        }
         if let fromDate = optionRangeOfEnabledDates.start,
             date.compare(fromDate) == .orderedAscending {
             return false
