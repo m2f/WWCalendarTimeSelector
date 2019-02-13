@@ -8,7 +8,7 @@ Pod::Spec.new do |s|
 
   s.ios.deployment_target = "8.0"
 
-  s.source       = { :git => "https://github.com/m2f/WWCalendarTimeSelector.git", :branch => master }
+  s.source       = { :git => "https://github.com/m2f/WWCalendarTimeSelector.git", :branch => "master" }
   s.source_files  = "Classes", "Sources/*.swift"
   s.resource_bundles = {
     'WWCalendarTimeSelectorStoryboardBundle' => ['Sources/*.storyboard']
