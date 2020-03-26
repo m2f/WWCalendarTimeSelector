@@ -388,10 +388,16 @@ open class WWCalendarTimeSelector: UIViewController, UITableViewDelegate, UITabl
     /// Selector will show the earliest selected date's month by default.
     open var optionCurrentDateRange: WWCalendarTimeSelectorDateRange = WWCalendarTimeSelectorDateRange()
     
+    open var reverseOptionEnabledValues: Bool = false
+
     open var optionEnabledDates: Set<Date> = []
     
+    open var optionEnabledDayOfWeek: Set<Int> = []
+
     open var optionRangeOfEnabledDates: WWCalendarTimeSelectorEnabledDateRange = WWCalendarTimeSelectorEnabledDateRange()
     
+    open var optionRangesOfEnabledDates: Set<WWCalendarTimeSelectorEnabledDateRange> = []
+
     /// Set the background blur effect, where background is a `UIVisualEffectView`. Available options are as `UIBlurEffectStyle`:
     ///
     /// `Dark`
@@ -1863,8 +1869,28 @@ open class WWCalendarTimeSelector: UIViewController, UITableViewDelegate, UITabl
             }
         }
     }
-    
-    internal func WWCalendarRowDateIsEnable(_ date: Date) -> Bool {
+
+    open func isEligibleDate(_ date: Date) -> Bool {
+        if !optionEnabledDayOfWeek.isEmpty &&
+            !optionEnabledDayOfWeek.contains(date.weekday) {
+            return false
+        }
+
+        if !optionRangesOfEnabledDates.isEmpty {
+            var isFoundInRanges: Bool = false
+            for range in optionRangesOfEnabledDates {
+                if let fromDate = range.start, let toDate = range.end {
+                    if date.compare(fromDate) != .orderedAscending && date.compare(toDate) != .orderedDescending {
+                        isFoundInRanges = true
+                        break
+                    }
+                }
+            }
+            if !isFoundInRanges {
+                return false
+            }
+        }
+
         if !optionEnabledDates.isEmpty &&
             !optionEnabledDates.contains(where: { (inputDate) -> Bool in
                 return NSCalendar.current.compare(date, to: inputDate, toGranularity: .day) == .orderedSame
@@ -1880,6 +1906,10 @@ open class WWCalendarTimeSelector: UIViewController, UITableViewDelegate, UITabl
             return false
         }
         return true
+    }
+
+    internal func WWCalendarRowDateIsEnable(_ date: Date) -> Bool {
+        return isEligibleDate(date) != reverseOptionEnabledValues
     }
     
     // CAN DO BETTER! TOO MANY LOOPS!
